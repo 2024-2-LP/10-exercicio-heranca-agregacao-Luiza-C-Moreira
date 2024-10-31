@@ -3,8 +3,10 @@ package school.sptech;
 import school.sptech.especialistas.DesenvolvedorMobile;
 import school.sptech.especialistas.DesenvolvedorWeb;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Consultoria {
     private String nome;
@@ -14,6 +16,7 @@ public class Consultoria {
     public Consultoria(String nome, Integer vagas) {
         this.nome = nome;
         this.vagas = vagas;
+        this.desenvolvedores = new ArrayList<>();
     }
 
     public Consultoria() {
@@ -68,17 +71,36 @@ public class Consultoria {
 
     public Desenvolvedor buscarMenorSalario(){
         return this.desenvolvedores.stream()
-        .sorted(Comparator.comparingDouble(Desenvolvedor::calcularSalario)).toList().get(0);
+                .min(Comparator.comparingDouble(Desenvolvedor::calcularSalario))
+                .orElse(null);
     }
 
-/*
+
     public List<Desenvolvedor> buscarPorTecnologia(String tecnologia){
-
+        return desenvolvedores.stream()
+                .filter(dev ->(dev instanceof DesenvolvedorWeb &&(
+                        ((DesenvolvedorWeb) dev).getBackend().equals(tecnologia) ||
+                                ((DesenvolvedorWeb) dev).getFrontend().equals(tecnologia) ||
+                                ((DesenvolvedorWeb) dev).getSgbd().equals(tecnologia)))
+                        ||
+                        (dev instanceof DesenvolvedorMobile && (
+                                ((DesenvolvedorMobile) dev).getPlataforma().equals(tecnologia) ||
+                                        ((DesenvolvedorMobile) dev).getLinguagem().equals(tecnologia)))
+                ).collect(Collectors.toList());
     }
 
-    public Double getTotalSalariosPorTecnologia(String tecnologia){}
+    public Double getTotalSalariosPorTecnologia(String tecnologia){
+        Double total = 0.0;
+        List<Desenvolvedor> dev = buscarPorTecnologia(tecnologia);
 
-*/
+        for (int i = 0; i < dev.size(); i++) {
+            total = dev.get(i).calcularSalario() + total;
+        }
+
+        return total;
+    }
+
+
 
 
 
